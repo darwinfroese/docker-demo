@@ -13,11 +13,11 @@ RUN ./configure --disable-shared --enable-static --disable-threaded-resolver CFL
 
 ##########################################################################################
 
-FROM golang:1.12.4 AS web-service-builder
+FROM golang:1.12.4 AS auth-service-builder
 
 RUN apt-get update && apt-get install -y git
 
-COPY webservice /src/webservice
+COPY authservice /src/authservice
 COPY go.mod /src
 COPY go.sum /src
 WORKDIR /src
@@ -29,25 +29,25 @@ ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
 
-WORKDIR /src/webservice
-RUN go build -ldflags="-w -s" -o webservice
+WORKDIR /src/authservice
+RUN go build -ldflags="-w -s" -o authservice
 
 #########################################################################################
 
-FROM golang:1.12.4 AS web-service-dev
+FROM golang:1.12.4 AS auth-service-dev
 
-COPY --from=web-service-builder /src/webservice/webservice /app/webservice
+COPY --from=auth-service-builder /src/authservice/authservice /app/authservice
 
 EXPOSE 80
 
 WORKDIR /app
-ENTRYPOINT [ "/app/webservice" ]
+ENTRYPOINT [ "/app/authservice" ]
 
 #########################################################################################
 
-FROM scratch AS web-service-release
+FROM scratch AS auth-service-release
 
-COPY --from=web-service-builder /src/webservice/webservice /webservice
+COPY --from=auth-service-builder /src/authservice/authservice /authservice
 COPY --from=ubuntu-curl /usr/local/bin/curl /curl
 
 EXPOSE 80
@@ -55,4 +55,4 @@ EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=30s --start-period=30s --retries=5 \
 		CMD curl -f http://localhost/api/v1/health || exit 1
 
-ENTRYPOINT [ "/webservice" ]
+ENTRYPOINT [ "/authservice" ]
