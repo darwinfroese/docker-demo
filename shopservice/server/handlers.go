@@ -1,48 +1,54 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"sync"
-	"time"
 
-	"github.com/satori/go.uuid"
-)
-
-type (
-	session struct {
-		ID      uuid.UUID
-		Valid   bool
-		Expires time.Time
-	}
-
-	healthInfo struct {
-		WebStatus   string
-		LoginStatus string
-		ShopStatus  string
-	}
-)
-
-var (
-	sessions    = map[uuid.UUID]session{}
-	sessionLock sync.Mutex
+	"github.com/darwinfroese/docker-demo/shopservice/repository"
 )
 
 func apiHealthHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("shop health api hit")
+	log.Println("shop api - health hit")
 	fmt.Fprintln(w, "Shop Healthy")
 
 	return
 }
 
-/* Web Structure
-/
-	/health	- healthcheck
-	/shop		- shop page
-	/login 	- login page
-*/
+func apiGetItemsHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("shop api - get items hit")
 
-func webHealthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "WEB Health Handler")
+	items, err := repository.GetAllItems()
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Item retrieval is broken"))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(&items)
+}
+
+func apiCreateItemHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("shop api - create item hit")
+
+	var i repository.Item
+	err := json.NewDecoder(r.Body).Decode(&i)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Bad item sent"))
+		return
+	}
+
+	err = repository.CreateItem(i)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Couldn't create the item"))
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }
