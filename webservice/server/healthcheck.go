@@ -32,8 +32,10 @@ func healthCheckService(url string) string {
 	case http.StatusOK:
 		return healthyMessage
 	case http.StatusNotFound:
+		log.Println("Service unavailable: ", url)
 		return unavailableMessage
 	default:
+		log.Println("Service unhealthy: ", url)
 		return unhealthyMessage
 	}
 }
