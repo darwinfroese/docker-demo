@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -18,6 +19,10 @@ type (
 		Expires time.Time
 	}
 
+	loginBody struct {
+		Username, Password string
+	}
+
 	healthInfo struct {
 		WebStatus   string
 		LoginStatus string
@@ -31,16 +36,21 @@ var (
 )
 
 func apiHealthHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("API Health Handler Hit")
+
 	health := healthCheckFull()
+
+	w.Header().Set("Content-Type", "application/json")
 
 	err := json.NewEncoder(w).Encode(&health)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
 		fmt.Fprintln(w, "We've fully fallen apart")
 		return
 	}
 
-	return
+	w.WriteHeader(http.StatusOK)
 }
 
 func apiShopHandler(w http.ResponseWriter, r *http.Request) {
@@ -48,8 +58,36 @@ func apiShopHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiLoginHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "API Login Handler")
+	log.Println("API Login Handler hit")
 
+	var body loginBody
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "That request is no good")
+		return
+	}
+
+	log.Printf("API body: %+v\n", body)
+
+	buf := new(bytes.Buffer)
+	json.NewEncoder(buf).Encode(&body)
+
+	res, err := http.Post("http://login.docker.demo/api/v1/login", "application/json; charset=utf-8", buf)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if res.StatusCode != http.StatusOK {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "That request is no good")
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "Login accepted")
 }
 
 /* Web Structure

@@ -1,48 +1,34 @@
 package server
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
-	"sync"
-	"time"
-
-	"github.com/satori/go.uuid"
 )
 
-type (
-	session struct {
-		ID      uuid.UUID
-		Valid   bool
-		Expires time.Time
-	}
-
-	healthInfo struct {
-		WebStatus   string
-		LoginStatus string
-		ShopStatus  string
-	}
-)
-
-var (
-	sessions    = map[uuid.UUID]session{}
-	sessionLock sync.Mutex
-)
+type healthResponse struct {
+	AuthServiceStatus string
+}
 
 func apiHealthHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("auth health check hit")
-	fmt.Fprintln(w, "Auth healthy")
 
-	return
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(&healthResponse{AuthServiceStatus: "HEALTHY"})
 }
 
-/* Web Structure
-/
-	/health	- healthcheck
-	/shop		- shop page
-	/login 	- login page
-*/
+func apiLoginHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("auth login check hit")
 
-func webHealthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "WEB Health Handler")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	resp := struct {
+		Login string
+	}{
+		"successful",
+	}
+	json.NewEncoder(w).Encode(&resp)
 }
