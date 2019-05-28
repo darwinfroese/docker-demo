@@ -5,7 +5,7 @@ version=$1
 curr=`$pwd`
 cd ..
 
-docker build -f webservice.dockerfile -t demo-webservice:$version-dev --target web-service-dev .
+docker build -f webservice.dockerfile -t demo-webservice:$version-dev --target web-service-dev --add-host auth.docker.demo:127.0.0.1 --add-host shop.docker.demo:127.0.0.1 .
 docker build -f authservice.dockerfile -t demo-authservice:$version-dev --target auth-service-dev .
 docker build -f shopservice.dockerfile -t demo-shopservice:$version-dev --target shop-service-dev . 
 
