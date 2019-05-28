@@ -1,5 +1,5 @@
 param(
-	[string]$version = 0.0.0
+	[string]$version = 0.0.0-dev
 )
 
 docker run --rm -d -l traefik.frontend.port=80 -l traefik.frontend.rule=Host:web.docker.demo --name demo-webservice webservice:$version
