@@ -1,0 +1,42 @@
+.app {	
+	min-height: 100vh;
+  background-color: #81968f;
+}
+
+.header-container {
+  text-align: center;
+  height: 100px;
+  display: flex;
+  flex-direction: row;
+	padding: 10px;
+  align-items: center;
+  justify-content: space-between;
+  font-size: calc(10px + 2vmin);
+  color: #4c443c;
+}
+
+.nav-container {
+	margin-top: 25px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.nav-item {
+	padding: 15px;
+	margin: 5px;
+	width: 100px;
+	font-size: 18px;
+	font-weight: 400;
+	background-color: #e9d6ec;
+}
+
+.nav-item:hover {
+	cursor: pointer;
+	background-color: #bfb0c2;
+}
+
+a {
+	text-decoration: none;
+	color: #4c443c;
+}

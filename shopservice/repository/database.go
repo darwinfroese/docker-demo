@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/boltdb/bolt"
 )
@@ -15,6 +16,10 @@ type BoltDB struct {
 var itemsBucket = []byte("items")
 
 func New() *BoltDB {
+	if _, err := os.Stat("/etc/docker-demo"); os.IsNotExist(err) {
+		os.Mkdir("/etc/docker-demo", 0600)
+	}
+
 	db := &BoltDB{
 		location: "/etc/docker-demo/items.db",
 	}

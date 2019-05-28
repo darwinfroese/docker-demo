@@ -39,6 +39,7 @@ FROM golang:1.12.4 AS shop-service-dev
 COPY --from=shop-service-builder /src/shopservice/shopservice /app/shopservice
 
 EXPOSE 80
+VOLUME /etc/docker-demo
 
 WORKDIR /app
 ENTRYPOINT [ "/app/shopservice" ]

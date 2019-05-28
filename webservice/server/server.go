@@ -16,7 +16,7 @@ func InitializeRouter() *http.Server {
 	apiRouter = registerAPIRoutes(apiRouter)
 	webRouter = registerWebRoutes(webRouter)
 
-	address := "0.0.0.0:80"
+	address := "0.0.0.0:8000"
 
 	srv := &http.Server{
 		Handler:      router,
@@ -30,7 +30,8 @@ func InitializeRouter() *http.Server {
 }
 
 func registerAPIRoutes(r *mux.Router) *mux.Router {
-	r.HandleFunc("/health", apiHealthHandler)
+	r.HandleFunc("/healthfull", apiHealthHandler)
+	r.HandleFunc("/newitem", apiAddItemHandler)
 	r.HandleFunc("/shop", apiShopHandler)
 	r.HandleFunc("/login", apiLoginHandler)
 
@@ -38,9 +39,8 @@ func registerAPIRoutes(r *mux.Router) *mux.Router {
 }
 
 func registerWebRoutes(r *mux.Router) *mux.Router {
-	r.HandleFunc("/health", webHealthHandler)
-	r.HandleFunc("/shop", webShopHandler)
-	r.HandleFunc("/login", webLoginHandler)
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("www/static"))))
+	r.Handle("/", http.FileServer(http.Dir("www/")))
 
 	return r
 }

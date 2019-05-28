@@ -2,18 +2,23 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/darwinfroese/docker-demo/shopservice/repository"
 )
 
+type healthResponse struct {
+	ShopServiceStatus string
+}
+
 func apiHealthHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("shop api - health hit")
-	fmt.Fprintln(w, "Shop Healthy")
 
-	return
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(&healthResponse{ShopServiceStatus: "HEALTHY"})
 }
 
 func apiGetItemsHandler(w http.ResponseWriter, r *http.Request) {
