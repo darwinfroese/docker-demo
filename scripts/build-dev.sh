@@ -2,6 +2,11 @@
 
 version=$1
 
+if [ -z "$version" ]
+then
+	version="0.0.0"
+fi
+
 curr=`$pwd`
 cd ..
 
