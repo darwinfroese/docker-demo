@@ -3,6 +3,7 @@ import { Link, Route, Switch } from "react-router-dom";
 import Login from "./Login";
 import Shop from "./Shop";
 import AddItem from "./AddItem";
+import Health from "./Health";
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
 				<Route path="/login" component={Login} />
 				<Route path="/shop" component={Shop} />
 				<Route path="/additem" component={AddItem} />
+				<Route path="/health" component={Health} />
 			</Switch>
     </div>
   );

@@ -11,6 +11,11 @@ var db *BoltDB
 func init() {
 	db = New()
 
+	items, _ := GetAllItems()
+	if len(items) != 0 {
+		return
+	}
+
 	CreateItem(Item{Name: "Oathkeeper", Description: "Valyrian steel. Wielded by the Lord Commander of the Kingsguard.", Price: 153240})
 	CreateItem(Item{Name: "Widowmaker", Description: "Valyrian steel. Whereabouts unknown.", Price: 450321})
 }

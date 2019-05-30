@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from 'axios';
+import CurrencyFormat from 'react-currency-format';
 import './Login.css';
 
 class Shop extends Component {
@@ -28,7 +29,8 @@ class Shop extends Component {
 				<div className="item-container">
 					<span className="item-title">{item.Name}</span>
 					<span className="item-description">{item.Description}</span>
-					<span className="item-price">{item.Price}</span>
+					<CurrencyFormat value={item.Price} displayType={'text'} thousandSeparator={true}
+						renderText={value => <span className="item-price">{value}</span>} />
 				</div>);
 		});
 

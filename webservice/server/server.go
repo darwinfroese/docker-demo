@@ -11,12 +11,12 @@ func InitializeRouter() *http.Server {
 	router := mux.NewRouter()
 
 	apiRouter := router.PathPrefix("/api/v1/").Subrouter()
-	webRouter := router.PathPrefix("/").Subrouter()
+	router.PathPrefix("/static/").Handler(http.FileServer(http.Dir("www")))
+	router.PathPrefix("/").HandlerFunc(indexHandler)
 
 	apiRouter = registerAPIRoutes(apiRouter)
-	webRouter = registerWebRoutes(webRouter)
 
-	address := "0.0.0.0:8000"
+	address := "0.0.0.0:80"
 
 	srv := &http.Server{
 		Handler:      router,
@@ -38,9 +38,6 @@ func registerAPIRoutes(r *mux.Router) *mux.Router {
 	return r
 }
 
-func registerWebRoutes(r *mux.Router) *mux.Router {
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("www/static"))))
-	r.Handle("/", http.FileServer(http.Dir("www/")))
-
-	return r
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "www/index.html")
 }

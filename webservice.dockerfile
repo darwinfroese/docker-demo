@@ -41,7 +41,7 @@ WORKDIR /usr/src/app
 
 ENV PATH /usr/src/app/node-modules/.bin:$PATH
 
-COPY webservice-frontend/package.json /src/src/app/package.json
+COPY webservice-frontend/package.json /usr/src/app/package.json
 RUN npm install --silent
 RUN npm install react-scripts@2.1.3 -g --silent
 
