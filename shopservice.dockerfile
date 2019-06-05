@@ -36,13 +36,6 @@ RUN go build -ldflags="-w -s" -o shopservice
 
 FROM golang:1.12.4 AS shop-service-dev
 
-COPY --from=shop-service-builder /src/shopservice/shopservice /app/shopservice
-
-EXPOSE 80
-VOLUME /etc/docker-demo
-
-ENTRYPOINT [ "/app/shopservice" ]
-
 #########################################################################################
 
 FROM scratch AS shop-service-release
